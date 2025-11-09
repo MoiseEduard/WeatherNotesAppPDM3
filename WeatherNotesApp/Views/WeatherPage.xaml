@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:WeatherNotesApp.ViewModels"
+             x:Class="WeatherNotesApp.Views.WeatherPage"
+             x:DataType="viewmodels:WeatherViewModel"
+             Title="Vremea">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <Label Text="Verifica vremea in orasul tau" 
+               FontSize="22" 
+               HorizontalOptions="Center" />
+
+        <Entry Placeholder="Introdu orasul"
+               Text="{Binding City}" />
+
+        <Button Text="Cauta"
+                Command="{Binding GetWeatherCommand}" />
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                           IsVisible="{Binding IsBusy}" />
+
+        <Frame Padding="15" IsVisible="{Binding HasWeather}">
+            <VerticalStackLayout>
+                <Label Text="{Binding Weather.CityName}" FontSize="20" FontAttributes="Bold" />
+                <Label Text="{Binding Weather.Description}" />
+                <Label Text="{Binding Weather.Temperature, StringFormat='Temperatura: {0}&#176;C'}" />
+                <Label Text="{Binding Weather.Humidity, StringFormat='Umiditate: {0}%'}" />
+                <Label Text="{Binding Weather.WindSpeed, StringFormat='Vant: {0} m/s'}" />
+
+                <HorizontalStackLayout Spacing="10">
+                    <Button Text="Vezi prognoza pe5 zile"
+                            IsVisible="{Binding HasWeather}"
+                            Clicked="OnShowForecastClicked" />
+
+                    <Button Text="Salveaza" Command="{Binding SaveCityAsNoteCommand}" IsVisible="{Binding HasWeather}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Frame>
+
+        <Label Text="Istoric Orase Cautate:"
+       FontAttributes="Bold"
+       Margin="0,20,0,5" />
+
+
+        <Picker x:Name="SearchedCitiesPicker"
+                ItemsSource="{Binding SearchedCities}"
+                ItemDisplayBinding="{Binding DisplayText}"
+                SelectedIndexChanged="OnCityPicked" />
+
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+ xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+ x:Class="WeatherNotesApp.Views.ForecastPage"
+ Title="5-day Forecast">
+
+ <ContentPage.BindingContext>
+ </ContentPage.BindingContext>
+
+ <ScrollView>
+ <VerticalStackLayout Padding="20" Spacing="10">
+ <Label Text="Prognoza pe5 zile" FontSize="20" HorizontalOptions="Center" />
+
+ <microcharts:ChartView HeightRequest="220"
+ Margin="0,10,0,10"
+ Chart="{Binding TemperatureChart}" />
+
+ <CollectionView ItemsSource="{Binding Forecast}">
+ <CollectionView.ItemTemplate>
+ <DataTemplate>
+ <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="Black">
+ <HorizontalStackLayout Spacing="15">
+ <Label Text="{Binding Date, StringFormat='{}{0:dddd dd MMM}'}" FontAttributes="Bold" />
+ <Label Text="{Binding Temp, StringFormat='{}{0}&#176;C'}" />
+ </HorizontalStackLayout>
+ </Frame>
+ </DataTemplate>
+ </CollectionView.ItemTemplate>
+ </CollectionView>
+
+ </VerticalStackLayout>
+ </ScrollView>
+</ContentPage>

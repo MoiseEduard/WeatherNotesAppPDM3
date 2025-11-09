@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:WeatherNotesApp.Views"
+    x:Class="WeatherNotesApp.Views.NotesPage"
+    x:Name="ThisPage"
+    Title="Notițe">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+
+            <Label Text="Jurnalul Tău de Notițe"
+                   FontSize="26"
+                   FontAttributes="Bold"
+                   TextColor="#2196F3"
+                   HorizontalOptions="Center" />
+
+            <Frame Padding="12"
+                   CornerRadius="16"
+                   BackgroundColor="#eef6ff"
+                   BorderColor="#b3d4fc"
+                   HasShadow="True">
+                <VerticalStackLayout Spacing="8">
+                    <Entry Placeholder="Scrie o notiță..."
+                           Text="{Binding NoteText}"
+                           ClearButtonVisibility="WhileEditing"
+                           FontSize="16" />
+
+                    <HorizontalStackLayout Spacing="10">
+                        <Button Text="➕ Adaugă"
+                                Command="{Binding AddNoteCommand}"
+                                BackgroundColor="#2196F3"
+                                TextColor="White"
+                                CornerRadius="10"
+                                FontAttributes="Bold"
+                                WidthRequest="130"/>
+
+                        <HorizontalStackLayout Spacing="10">
+                            <Button Text="🗑️ Șterge notițe"
+                                BackgroundColor="#E53935"
+                                TextColor="White"
+                                Clicked="OnDeleteNotesClicked"/>
+                            <Button Text="✏️ Actualizează notițe"
+                                BackgroundColor="#2196F3"
+                                TextColor="White"
+                                Clicked="OnUpdateNotesClicked"/>
+                        </HorizontalStackLayout>
+
+                        <Button Text="🌦️ Vezi Vremea"
+                                Clicked="OnWeatherButtonClicked"
+                                BackgroundColor="#4CAF50"
+                                TextColor="White"
+                                CornerRadius="10"
+                                WidthRequest="150"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <CollectionView ItemsSource="{Binding Notes}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Șterge"
+                                               BackgroundColor="#E53935"
+                                               IconImageSource="delete.png"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type local:NotesPage}}, Path=BindingContext.DeleteNoteCommand}"
+                                               CommandParameter="{Binding .}" />
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <Frame Margin="5,8"
+                                   Padding="12"
+                                   BackgroundColor="#fafafa"
+                                   BorderColor="#ddd"
+                                   CornerRadius="14"
+                                   HasShadow="True">
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding Text}"
+                                           FontSize="18"
+                                           TextColor="#212121"
+                                           LineBreakMode="WordWrap"/>
+
+                                    <Label Text="{Binding Date, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+                                           FontSize="13"
+                                           TextColor="#757575"
+                                           Margin="0,4,0,0"/>
+
+                                    <Label Text="{Binding WeatherCondition}"
+                                           FontSize="13"
+                                           TextColor="#00838f"
+                                           FontAttributes="Italic"
+                                           Margin="0,2,0,0"/>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Frame Padding="8"
+                   Margin="0,10,0,0"
+                   CornerRadius="12"
+                   BackgroundColor="#f0f0f0"
+                   BorderColor="Black">
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+                    <Button Text="◀️"
+                            Command="{Binding PreviousPageCommand}"
+                            CornerRadius="8"
+                            WidthRequest="60" />
+                    <Label Text="{Binding PageInfo}"
+                           FontSize="16"
+                           VerticalOptions="Center"
+                           FontAttributes="Bold"
+                           TextColor="#2196F3"
+                           />
+                    <Button Text="▶️"
+                            Command="{Binding NextPageCommand}"
+                            CornerRadius="8"
+                            WidthRequest="60" />
+                </HorizontalStackLayout>
+            </Frame>
+
+            <Label Text="{Binding PageInfo}"
+       FontSize="16"
+       VerticalOptions="Center"
+       FontAttributes="Bold"
+       TextColor="#2196F3" />
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
