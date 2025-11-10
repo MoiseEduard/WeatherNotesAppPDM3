@@ -7,6 +7,7 @@ using System.Windows.Input;
 using WeatherNotesApp.Models;
 using WeatherNotesApp.Services;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Media;
 
 namespace WeatherNotesApp.ViewModels
 {
@@ -31,6 +32,20 @@ namespace WeatherNotesApp.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        private string _selectedPhotoPath;
+        public string SelectedPhotoPath
+        {
+            get => _selectedPhotoPath;
+            set
+            {
+                _selectedPhotoPath = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsPhotoSelected));
+            }
+        }
+        public bool IsPhotoSelected => !string.IsNullOrEmpty(SelectedPhotoPath);
+
 
         public int CurrentPage
         {
@@ -61,6 +76,8 @@ namespace WeatherNotesApp.ViewModels
         public ICommand NextPageCommand { get; }
         public ICommand PreviousPageCommand { get; }
 
+        public ICommand UploadPhotoCommand { get; }
+
         public NotesViewModel(DatabaseService databaseService)
         {
             _databaseService = databaseService;
@@ -68,6 +85,8 @@ namespace WeatherNotesApp.ViewModels
             DeleteNoteCommand = new Command<Note>(async (note) => await DeleteNote(note));
             NextPageCommand = new Command(async () => await NextPage());
             PreviousPageCommand = new Command(async () => await PreviousPage());
+
+            UploadPhotoCommand = new Command(async () => await UploadPhoto());
 
             _ = LoadNotesAsync();
         }
@@ -109,24 +128,39 @@ namespace WeatherNotesApp.ViewModels
 
         private async Task AddNote()
         {
-            if (string.IsNullOrWhiteSpace(NoteText))
+            if (string.IsNullOrWhiteSpace(NoteText) && string.IsNullOrEmpty(SelectedPhotoPath))
                 return;
 
             var note = new Note
             {
                 Text = NoteText,
                 Date = DateTime.Now,
-                WeatherCondition = "-"
+                WeatherCondition = "-",
+                PhotoPath = SelectedPhotoPath
             };
 
             await _databaseService.SaveNoteAsync(note);
+
             NoteText = string.Empty;
+            SelectedPhotoPath = string.Empty;
 
             await LoadNotesAsync();
         }
 
         private async Task DeleteNote(Note note)
         {
+            if (note.HasPhoto && File.Exists(note.PhotoPath))
+            {
+                try
+                {
+                    File.Delete(note.PhotoPath);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to delete photo: {ex.Message}");
+                }
+            }
+
             await _databaseService.DeleteNoteAsync(note);
             await LoadNotesAsync();
         }
@@ -146,6 +180,34 @@ namespace WeatherNotesApp.ViewModels
             {
                 CurrentPage--;
                 await LoadCurrentPageAsync();
+            }
+        }
+
+        private async Task UploadPhoto()
+        {
+            try
+            {
+                var result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+                {
+                    Title = "Alege o fotografie"
+                });
+
+                if (result != null)
+                {
+                    string localPath = Path.Combine(FileSystem.AppDataDirectory, Guid.NewGuid().ToString() + Path.GetExtension(result.FileName));
+
+                    using (var sourceStream = await result.OpenReadAsync())
+                    using (var localStream = File.Create(localPath))
+                    {
+                        await sourceStream.CopyToAsync(localStream);
+                    }
+
+                    SelectedPhotoPath = localPath;
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Eroare", $"Nu am putut încărca fotografia: {ex.Message}", "OK");
             }
         }
     }

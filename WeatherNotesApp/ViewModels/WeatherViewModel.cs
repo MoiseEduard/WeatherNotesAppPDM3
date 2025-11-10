@@ -32,7 +32,6 @@ namespace WeatherNotesApp.ViewModels
             private set { _forecast = value; OnPropertyChanged(); }
         }
 
-        // Modelul pentru afisarea oraselor cautate in UI
         public record CitySearchEntry(string City, DateTime Date)
         {
             public string DisplayText => $"{City} - {Date:dd MMM yyyy}";
@@ -67,7 +66,6 @@ namespace WeatherNotesApp.ViewModels
                             var entry = new CitySearchEntry(cityName, DateTime.Now);
                             SearchedCities.Add(entry);
 
-                            // ✅ Salvare in baza de date
                             var cities = await _databaseService.GetCitiesAsync();
                             if (!cities.Any(c => c.Name.Equals(cityName, StringComparison.OrdinalIgnoreCase)))
                             {

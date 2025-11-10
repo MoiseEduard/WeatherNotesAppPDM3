@@ -27,6 +27,12 @@
                            ClearButtonVisibility="WhileEditing"
                            FontSize="16" />
 
+                    <Image Source="{Binding SelectedPhotoPath}"
+                           IsVisible="{Binding IsPhotoSelected}"
+                           HeightRequest="100"
+                           Aspect="AspectFit"
+                           Margin="0,5" />
+
                     <HorizontalStackLayout Spacing="10">
                         <Button Text="➕ Adaugă"
                                 Command="{Binding AddNoteCommand}"
@@ -36,6 +42,15 @@
                                 FontAttributes="Bold"
                                 WidthRequest="130"/>
 
+                        <Button Text="📸 Încarcă Fotografie"
+                                Command="{Binding UploadPhotoCommand}"
+                                BackgroundColor="#0288D1"
+                                TextColor="White"
+                                CornerRadius="10" />
+
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Spacing="10" Margin="0,10,0,0">
                         <HorizontalStackLayout Spacing="10">
                             <Button Text="🗑️ Șterge notițe"
                                 BackgroundColor="#E53935"
@@ -83,6 +98,43 @@
                                            TextColor="#212121"
                                            LineBreakMode="WordWrap"/>
 
+                                    <Grid IsVisible="{Binding HasPhoto}" Margin="0,8"
+                                          BackgroundColor="Transparent">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+                                                <VisualState x:Name="PointerOver">
+                                                    <VisualState.Setters>
+                                                        <Setter TargetName="HoverOverlay" Property="IsVisible" Value="True" />
+                                                        <Setter TargetName="HoverLabel" Property="IsVisible" Value="True" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+
+                                        <Image Source="{Binding PhotoPath}"
+                                               HeightRequest="200"
+                                               Aspect="AspectFill" />
+
+                                        <BoxView x:Name="HoverOverlay"
+                                                 Color="#000000"
+                                                 Opacity="0.5"
+                                                 IsVisible="False"
+                                                 InputTransparent="True" />
+                                        <Label x:Name="HoverLabel"
+                                               Text="Deschide"
+                                               TextColor="White"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               IsVisible="False"
+                                               InputTransparent="True" />
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnPhotoTapped" />
+                                        </Grid.GestureRecognizers>
+
+                                    </Grid>
                                     <Label Text="{Binding Date, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
                                            FontSize="13"
                                            TextColor="#757575"
@@ -107,7 +159,7 @@
                    BorderColor="Black">
                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
                     <Button Text="◀️"
-                            Command="{Binding PreviousPageCommand}"
+                           Command="{Binding PreviousPageCommand}"
                             CornerRadius="8"
                             WidthRequest="60" />
                     <Label Text="{Binding PageInfo}"
@@ -118,16 +170,16 @@
                            />
                     <Button Text="▶️"
                             Command="{Binding NextPageCommand}"
-                            CornerRadius="8"
+                             CornerRadius="8"
                             WidthRequest="60" />
                 </HorizontalStackLayout>
             </Frame>
 
             <Label Text="{Binding PageInfo}"
-       FontSize="16"
-       VerticalOptions="Center"
-       FontAttributes="Bold"
-       TextColor="#2196F3" />
+                   FontSize="16"
+                   VerticalOptions="Center"
+                   FontAttributes="Bold"
+                   TextColor="#2196F3" />
 
 
         </VerticalStackLayout>

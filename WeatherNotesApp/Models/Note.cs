@@ -20,5 +20,7 @@ namespace WeatherNotesApp.Models
 
         public string CityName { get; set; }
         public double Temperature { get; set; }
+        public string PhotoPath { get; set; }
+        public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
     }
 }
